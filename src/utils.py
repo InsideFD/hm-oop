@@ -1,5 +1,5 @@
 import json
-from src.models import Product, Category
+from src.models import Category, Product
 
 
 def load_products_from_json(file_path: str) -> list[Category]:
@@ -21,7 +21,7 @@ def load_products_from_json(file_path: str) -> list[Category]:
         for category_data in data:
             products = []
 
-            for product_data in category_data['products']:
+            for product_data in category_data.get('products', []):
                 product = Product(
                     name=product_data['name'],
                     description=product_data['description'],
@@ -42,6 +42,12 @@ def load_products_from_json(file_path: str) -> list[Category]:
     except FileNotFoundError:
         print(f"Файл {file_path} не найден")
         return []
-    except json.JSONDecodeError:
-        print("Ошибка декодирования JSON")
+    except json.JSONDecodeError as e:
+        print(f"Ошибка декодирования JSON: {e}")
+        return []
+    except KeyError as e:
+        print(f"Отсутствует обязательное поле в JSON: {e}")
+        return []
+    except Exception as e:
+        print(f"Неожиданная ошибка при загрузке JSON: {e}")
         return []
