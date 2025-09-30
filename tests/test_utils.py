@@ -9,12 +9,12 @@ from src.utils import load_products_from_json
 class TestJsonUtils:
     """Тесты для JSON утилит."""
 
+    def setup_method(self):
+        """Сброс счетчиков перед каждым тестом."""
+        Category.reset_counters()
+
     def test_load_products_from_json_valid_file(self):
         """Тест загрузки данных из корректного JSON файла."""
-        # Сброс счетчиков перед тестом
-        Category.category_count = 0
-        Category.product_count = 0
-
         # Создаем временный JSON файл
         test_data = [
             {
@@ -37,7 +37,9 @@ class TestJsonUtils:
             }
         ]
 
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             json.dump(test_data, f, ensure_ascii=False)
             temp_file_path = f.name
 
@@ -49,12 +51,12 @@ class TestJsonUtils:
             assert len(categories) == 1
             assert isinstance(categories[0], Category)
             assert categories[0].name == "Ноутбуки"
-            assert len(categories[0].products) == 2
-            assert isinstance(categories[0].products[0], Product)
-            assert categories[0].products[0].name == "MacBook Pro 16"
-            assert categories[0].products[0].price == 250000.0
-            assert categories[0].products[1].name == "Dell XPS 15"
-            assert categories[0].products[1].quantity == 5
+            assert len(categories[0]) == 2  # Используем __len__
+            assert isinstance(categories[0]._products[0], Product)
+            assert categories[0]._products[0].name == "MacBook Pro 16"
+            assert categories[0]._products[0].price == 250000.0
+            assert categories[0]._products[1].name == "Dell XPS 15"
+            assert categories[0]._products[1].quantity == 5
 
         finally:
             # Удаляем временный файл
@@ -69,7 +71,9 @@ class TestJsonUtils:
     def test_load_products_from_json_invalid_json(self):
         """Тест загрузки из некорректного JSON файла."""
         # Создаем временный файл с некорректным JSON
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             f.write("invalid json content")
             temp_file_path = f.name
 
@@ -82,7 +86,9 @@ class TestJsonUtils:
 
     def test_load_products_from_json_empty_file(self):
         """Тест загрузки из пустого JSON файла."""
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             json.dump([], f, ensure_ascii=False)
             temp_file_path = f.name
 
@@ -95,10 +101,6 @@ class TestJsonUtils:
 
     def test_load_products_from_json_multiple_categories(self):
         """Тест загрузки нескольких категорий из JSON."""
-        # Сброс счетчиков перед тестом
-        Category.category_count = 0
-        Category.product_count = 0
-
         test_data = [
             {
                 "name": "Категория 1",
@@ -132,7 +134,9 @@ class TestJsonUtils:
             },
         ]
 
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             json.dump(test_data, f, ensure_ascii=False)
             temp_file_path = f.name
 
@@ -141,23 +145,23 @@ class TestJsonUtils:
 
             assert len(categories) == 2
             assert categories[0].name == "Категория 1"
-            assert len(categories[0].products) == 1
+            assert len(categories[0]) == 1  # Используем __len__
             assert categories[1].name == "Категория 2"
-            assert len(categories[1].products) == 2
+            assert len(categories[1]) == 2  # Используем __len__
 
         finally:
             if os.path.exists(temp_file_path):
                 os.unlink(temp_file_path)
 
     def test_load_products_from_json_with_special_characters(self):
-        """Тест загрузки JSON со специальными символами."""
+        """Тест загрузки JSON с специальными символами."""
         test_data = [
             {
                 "name": "Тестовая категория",
                 "description": "Описание с спецсимволами: ©®™",
                 "products": [
                     {
-                        "name": "Товар с цитатой \"test\"",
+                        "name": 'Товар с цитатой "test"',
                         "description": "Описание 'одинарные' кавычки",
                         "price": 100.0,
                         "quantity": 1,
@@ -166,7 +170,9 @@ class TestJsonUtils:
             }
         ]
 
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding='utf-8') as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".json", delete=False, encoding="utf-8"
+        ) as f:
             json.dump(test_data, f, ensure_ascii=False)
             temp_file_path = f.name
 
