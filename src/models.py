@@ -15,13 +15,13 @@ class Product:
         """
         self.name = name
         self.description = description
-        self._price = price  # Приватный атрибут цены
+        self.__price = price
         self.quantity = quantity
 
     @property
     def price(self):
         """Геттер для цены."""
-        return self._price
+        return self.__price
 
     @price.setter
     def price(self, new_price: float):
@@ -34,7 +34,7 @@ class Product:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
         else:
-            self._price = new_price
+            self.__price = new_price
 
     @classmethod
     def new_product(cls, product_data: dict):
@@ -48,19 +48,19 @@ class Product:
             Объект класса Product
         """
         return cls(
-            name=product_data["name"],
-            description=product_data["description"],
-            price=product_data["price"],
-            quantity=product_data["quantity"],
+            name=product_data['name'],
+            description=product_data['description'],
+            price=product_data['price'],
+            quantity=product_data['quantity']
         )
 
     def __str__(self):
         """Строковое представление продукта."""
-        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     def __repr__(self):
         """Представление объекта для отладки."""
-        return f"Product('{self.name}', '{self.description}', {self._price}, {self.quantity})"
+        return f"Product('{self.name}', '{self.description}', {self.__price}, {self.quantity})"
 
 
 class Category:
@@ -82,7 +82,7 @@ class Category:
         """
         self.name = name
         self.description = description
-        self._products = products  # Приватный атрибут списка товаров
+        self._products = products
 
         # Обновляем атрибуты класса
         Category.category_count += 1

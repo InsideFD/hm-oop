@@ -204,12 +204,17 @@ class TestNewFeatures:
         assert product.quantity == 10
 
     def test_private_price_attribute(self):
-        """Тест приватного атрибута цены."""
+        """Тест приватного атрибута цены с двойным подчеркиванием."""
         product = Product("Test", "Desc", 100.0, 5)
 
-        # Проверяем, что атрибут приватный
-        assert hasattr(product, "_price")
-        assert product._price == 100.0
+        assert hasattr(product, '_Product__price')
+        assert product._Product__price == 100.0
+
+        try:
+            _ = product.__price
+            assert False, "Should have raised AttributeError"
+        except AttributeError:
+            assert True
 
     def test_price_getter(self):
         """Тест геттера цены."""
@@ -224,7 +229,33 @@ class TestNewFeatures:
         product.price = 200.0
 
         assert product.price == 200.0
-        assert product._price == 200.0
+        assert product._Product__price == 200.0
+
+        def test_price_getter_setter():
+            """Тест что геттер и сеттер работают корректно с приватным атрибутом."""
+            product = Product("Test", "Description", 100.0, 5)
+
+            # Проверяем геттер
+            assert product.price == 100.0
+
+            # Проверяем сеттер с корректным значением
+            product.price = 150.0
+            assert product.price == 150.0
+            assert product._Product__price == 150.0
+
+            # Проверяем сеттер с некорректным значением
+            import io
+            import sys
+            captured_output = io.StringIO()
+            sys.stdout = captured_output
+
+            product.price = -50.0  # Попытка установить отрицательную цену
+
+            sys.stdout = sys.__stdout__
+
+            # Цена не должна измениться
+            assert product.price == 150.0
+            assert "Цена не должна быть нулевая или отрицательная" in captured_output.getvalue()
 
     def test_price_setter_negative(self):
         """Тест сеттера цены с отрицательным значением."""
@@ -232,7 +263,6 @@ class TestNewFeatures:
 
         import io
         import sys
-
         captured_output = io.StringIO()
         sys.stdout = captured_output
 
@@ -241,10 +271,8 @@ class TestNewFeatures:
         sys.stdout = sys.__stdout__
 
         assert product.price == 100.0
-        assert (
-            "Цена не должна быть нулевая или отрицательная"
-            in captured_output.getvalue()
-        )
+        assert product._Product__price == 100.0
+        assert "Цена не должна быть нулевая или отрицательная" in captured_output.getvalue()
 
     def test_price_setter_zero(self):
         """Тест сеттера цены с нулевым значением."""
