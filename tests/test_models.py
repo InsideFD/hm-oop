@@ -1,4 +1,4 @@
-from src.models import Category, Product
+from src.models import Category, CategoryIterator, Product
 
 
 class TestProduct:
@@ -207,7 +207,7 @@ class TestNewFeatures:
         """Тест приватного атрибута цены с двойным подчеркиванием."""
         product = Product("Test", "Desc", 100.0, 5)
 
-        assert hasattr(product, '_Product__price')
+        assert hasattr(product, "_Product__price")
         assert product._Product__price == 100.0
 
         try:
@@ -246,6 +246,7 @@ class TestNewFeatures:
             # Проверяем сеттер с некорректным значением
             import io
             import sys
+
             captured_output = io.StringIO()
             sys.stdout = captured_output
 
@@ -255,7 +256,10 @@ class TestNewFeatures:
 
             # Цена не должна измениться
             assert product.price == 150.0
-            assert "Цена не должна быть нулевая или отрицательная" in captured_output.getvalue()
+            assert (
+                "Цена не должна быть нулевая или отрицательная"
+                in captured_output.getvalue()
+            )
 
     def test_price_setter_negative(self):
         """Тест сеттера цены с отрицательным значением."""
@@ -263,6 +267,7 @@ class TestNewFeatures:
 
         import io
         import sys
+
         captured_output = io.StringIO()
         sys.stdout = captured_output
 
@@ -272,7 +277,10 @@ class TestNewFeatures:
 
         assert product.price == 100.0
         assert product._Product__price == 100.0
-        assert "Цена не должна быть нулевая или отрицательная" in captured_output.getvalue()
+        assert (
+            "Цена не должна быть нулевая или отрицательная"
+            in captured_output.getvalue()
+        )
 
     def test_price_setter_zero(self):
         """Тест сеттера цены с нулевым значением."""
@@ -316,3 +324,127 @@ class TestNewFeatures:
 
         assert Category.category_count == initial_category_count + 1
         assert Category.product_count == initial_product_count + 2
+
+
+class TestMagicMethods:
+    """Тесты для магических методов."""
+
+    def setup_method(self):
+        """Сброс счетчиков перед каждым тестом."""
+        Category.reset_counters()
+
+    def test_product_str_method(self):
+        """Тест строкового представления продукта."""
+        product = Product("Тестовый товар", "Описание", 150.0, 10)
+
+        result = str(product)
+        expected = "Тестовый товар, 150.0 руб. Остаток: 10 шт."
+
+        assert result == expected
+
+    def test_category_str_method(self):
+        """Тест строкового представления категории."""
+        products = [
+            Product("Товар 1", "Описание 1", 100.0, 5),
+            Product("Товар 2", "Описание 2", 200.0, 3),
+        ]
+        category = Category("Тестовая категория", "Описание", products)
+
+        result = str(category)
+        expected = "Тестовая категория, количество продуктов: 8 шт."  # 5 + 3 = 8
+
+        assert result == expected
+
+    def test_category_str_empty(self):
+        """Тест строкового представления пустой категории."""
+        category = Category("Пустая категория", "Описание", [])
+
+        result = str(category)
+        expected = "Пустая категория, количество продуктов: 0 шт."
+
+        assert result == expected
+
+    def test_product_addition(self):
+        """Тест сложения двух продуктов."""
+        product1 = Product("Товар 1", "Описание 1", 100.0, 10)  # 100 * 10 = 1000
+        product2 = Product("Товар 2", "Описание 2", 200.0, 5)  # 200 * 5 = 1000
+
+        result = product1 + product2
+
+        assert result == 2000.0  # 1000 + 1000 = 2000
+
+    def test_product_addition_different_prices(self):
+        """Тест сложения продуктов с разными ценами."""
+        product1 = Product("Товар 1", "Описание 1", 50.0, 4)  # 50 * 4 = 200
+        product2 = Product("Товар 2", "Описание 2", 150.0, 2)  # 150 * 2 = 300
+
+        result = product1 + product2
+
+        assert result == 500.0  # 200 + 300 = 500
+
+    def test_product_addition_invalid_type(self):
+        """Тест сложения продукта с неверным типом."""
+        product = Product("Товар", "Описание", 100.0, 5)
+
+        try:
+            result = product + "не продукт"
+            assert False, "Should have raised TypeError"
+        except TypeError as e:
+            assert "Можно складывать только объекты класса Product" in str(e)
+
+    def test_category_iterator(self):
+        """Тест итератора категории."""
+        products = [
+            Product("Товар 1", "Описание 1", 100.0, 5),
+            Product("Товар 2", "Описание 2", 200.0, 3),
+            Product("Товар 3", "Описание 3", 300.0, 2),
+        ]
+        category = Category("Тестовая категория", "Описание", products)
+
+        # Тестируем итерацию
+        iterated_products = []
+        for product in category:
+            iterated_products.append(product)
+
+        assert len(iterated_products) == 3
+        assert iterated_products[0].name == "Товар 1"
+        assert iterated_products[1].name == "Товар 2"
+        assert iterated_products[2].name == "Товар 3"
+
+    def test_category_iterator_empty(self):
+        """Тест итератора пустой категории."""
+        category = Category("Пустая категория", "Описание", [])
+
+        iterated_products = list(category)
+
+        assert len(iterated_products) == 0
+
+    def test_category_iterator_direct(self):
+        """Тест прямого использования итератора."""
+        products = [
+            Product("Товар 1", "Описание 1", 100.0, 5),
+            Product("Товар 2", "Описание 2", 200.0, 3),
+        ]
+        iterator = CategoryIterator(products)
+
+        product1 = next(iterator)
+        product2 = next(iterator)
+
+        assert product1.name == "Товар 1"
+        assert product2.name == "Товар 2"
+
+        # Должно вызвать StopIteration
+        try:
+            next(iterator)
+            assert False, "Should have raised StopIteration"
+        except StopIteration:
+            assert True
+
+    def test_products_getter_uses_str(self):
+        """Тест что геттер products использует __str__ метод."""
+        product = Product("Тестовый товар", "Описание", 150.0, 10)
+        category = Category("Тестовая категория", "Описание", [product])
+
+        products_string = category.products
+
+        assert "Тестовый товар, 150.0 руб. Остаток: 10 шт." in products_string

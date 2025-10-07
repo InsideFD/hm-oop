@@ -18,6 +18,22 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
+    def __str__(self):
+        """Строковое представление продукта."""
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        """
+        Магический метод сложения для продуктов.
+
+        Returns:
+            Сумма произведений цены на количество для двух продуктов
+        """
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+
+        return (self.__price * self.quantity) + (other.__price * other.quantity)
+
     @property
     def price(self):
         """Геттер для цены."""
@@ -48,15 +64,11 @@ class Product:
             Объект класса Product
         """
         return cls(
-            name=product_data['name'],
-            description=product_data['description'],
-            price=product_data['price'],
-            quantity=product_data['quantity']
+            name=product_data["name"],
+            description=product_data["description"],
+            price=product_data["price"],
+            quantity=product_data["quantity"],
         )
-
-    def __str__(self):
-        """Строковое представление продукта."""
-        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     def __repr__(self):
         """Представление объекта для отладки."""
@@ -88,6 +100,11 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
+    def __str__(self):
+        """Строковое представление категории."""
+        total_quantity = sum(product.quantity for product in self._products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
     def add_product(self, product):
         """
         Добавляет продукт в категорию.
@@ -113,12 +130,53 @@ class Category:
         """Возвращает количество товаров в категории."""
         return len(self._products)
 
-    def __repr__(self):
-        """Представление объекта для отладки."""
-        return f"Category('{self.name}', '{self.description}', {len(self._products)} products)"
+    def __iter__(self):
+        """Возвращает итератор для товаров категории."""
+        return CategoryIterator(self._products)
 
     @classmethod
     def reset_counters(cls):
         """Сбрасывает счетчики категорий и продуктов."""
         cls.category_count = 0
         cls.product_count = 0
+
+    def __repr__(self):
+        """Представление объекта для отладки."""
+        return f"Category('{self.name}', '{self.description}', {len(self._products)} products)"
+
+
+class CategoryIterator:
+    """
+    Итератор для перебора товаров в категории.
+    """
+
+    def __init__(self, products: list):
+        """
+        Инициализация итератора.
+
+        Args:
+            products: Список товаров для итерации
+        """
+        self._products = products
+        self._index = 0
+
+    def __iter__(self):
+        """Возвращает сам итератор."""
+        return self
+
+    def __next__(self):
+        """
+        Возвращает следующий товар в категории.
+
+        Returns:
+            Следующий объект Product
+
+        Raises:
+            StopIteration: когда товары закончились
+        """
+        if self._index < len(self._products):
+            product = self._products[self._index]
+            self._index += 1
+            return product
+        else:
+            raise StopIteration

@@ -2,93 +2,75 @@ from src.models import Product, Category
 from src.utils import load_products_from_json
 
 
-def demonstrate_basic_functionality():
-    """Демонстрация базовой функциональности."""
-    print("=== ДЕМОНСТРАЦИЯ БАЗОВОЙ ФУНКЦИОНАЛЬНОСТИ ===")
+def demonstrate_magic_methods():
+    """Демонстрация магических методов."""
+    print("=== ДЕМОНСТРАЦИЯ МАГИЧЕСКИХ МЕТОДОВ ===")
 
     # Создание товаров
     product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
-    # Вывод информации о товарах
-    print("\n1. Информация о товарах:")
+    # Демонстрация __str__ для продуктов
+    print("\n1. Строковое представление продуктов:")
     print(product1)
     print(product2)
     print(product3)
 
     # Создание категории
-    category1 = Category(
+    category = Category(
         "Смартфоны",
         "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
         [product1, product2, product3],
     )
 
-    # Проверка атрибутов категории
-    print(f"\n2. Название категории: {category1.name}")
-    print(f"Описание категории: {category1.description}")
-    print(f"Количество товаров в категории: {len(category1)}")
-    print(f"Всего категорий в системе: {Category.category_count}")
-    print(f"Всего товаров в системе: {Category.product_count}")
+    # Демонстрация __str__ для категории
+    print(f"\n2. Строковое представление категории:")
+    print(category)
 
-    # Демонстрация геттера products
-    print("\n3. Список товаров в категории (через геттер):")
-    print(category1.products)
+    # Демонстрация сложения продуктов
+    print(f"\n3. Сложение продуктов (общая стоимость товаров на складе):")
+    total_value = product1 + product2
+    print(f"Стоимость {product1.name} и {product2.name} на складе: {total_value} руб.")
 
-    # Создание второй категории
-    product4 = Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7)
-    category2 = Category(
-        "Телевизоры",
-        "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником",
-        [product4],
-    )
+    total_all = product1 + product2 + product3
+    print(f"Общая стоимость всех трех товаров на складе: {total_all} руб.")
 
-    print(f"\n4. Вторая категория: {category2.name}")
-    print(f"Количество товаров: {len(category2)}")
+    # Демонстрация итератора категории
+    print(f"\n4. Итерация по товарам категории:")
+    for i, product in enumerate(category, 1):
+        print(f"{i}. {product}")
 
-    # Общая статистика
-    print("\n5. Общая статистика:")
-    print(f"Всего категорий в системе: {Category.category_count}")
-    print(f"Всего товаров в системе: {Category.product_count}")
+    # Демонстрация с пустой категорией
+    empty_category = Category("Пустая категория", "Нет товаров", [])
+    print(f"\n5. Пустая категория:")
+    print(empty_category)
+    print("Товары в пустой категории:")
+    for product in empty_category:
+        print(product)  # Этот блок не выполнится
+    print("(товаров нет)")
 
 
-def demonstrate_new_features():
-    """Демонстрация новой функциональности."""
-    print("\n=== ДЕМОНСТРАЦИЯ НОВОЙ ФУНКЦИОНАЛЬНОСТИ ===")
+def demonstrate_previous_functionality():
+    """Демонстрация предыдущей функциональности."""
+    print("\n=== ДЕМОНСТРАЦИЯ ПРЕДЫДУЩЕЙ ФУНКЦИОНАЛЬНОСТИ ===")
 
-    print("\n1. Создание продукта через класс-метод:")
-    product_data = {
-        "name": "Huawei P60 Pro",
-        "description": "256GB, Черный, камера Leica",
-        "price": 120000.0,
-        "quantity": 6
-    }
-    new_product = Product.new_product(product_data)
-    print(f"Создан продукт: {new_product}")
+    # Проверка работы геттера products
+    product1 = Product("Тестовый товар 1", "Описание 1", 1000.0, 2)
+    product2 = Product("Тестовый товар 2", "Описание 2", 2000.0, 3)
 
-    print("\n2. Добавление продукта в категорию:")
-    category = Category("Тестовые товары", "Категория для тестирования", [])
-    print(f"Товаров в категории до добавления: {len(category)}")
+    category = Category("Тестовая категория", "Описание", [product1, product2])
 
-    category.add_product(new_product)
-    print(f"Товаров в категории после добавления: {len(category)}")
-    print("Список товаров:")
+    print("\nГеттер products:")
     print(category.products)
 
-    print("\n3. Работа с приватным атрибутом цены:")
-    test_product = Product("Тестовый товар", "Описание", 1000.0, 10)
-    print(f"Исходная цена: {test_product.price} руб.")
-
-    print("Попытка установить цену -500 руб.:")
-    test_product.price = -500
-
-    test_product.price = 1500.0
-    print(f"Новая цена: {test_product.price} руб.")
-
-    # Проверка счетчиков после добавления товаров
-    print(f"\n4. Итоговые счетчики:")
-    print(f"Всего категорий: {Category.category_count}")
-    print(f"Всего товаров: {Category.product_count}")
+    # Проверка работы с ценой
+    print(f"\nРабота с ценой:")
+    print(f"Исходная цена: {product1.price}")
+    product1.price = 1500.0
+    print(f"Новая цена: {product1.price}")
+    print("Попытка установить отрицательную цену:")
+    product1.price = -500
 
 
 def demonstrate_json_loading():
@@ -99,13 +81,15 @@ def demonstrate_json_loading():
     if categories_from_json:
         print(f"Загружено категорий из JSON: {len(categories_from_json)}")
         for category in categories_from_json:
-            print(f"\n{category.name}:")
-            print(category.products)
+            print(f"\n{category}")  # Используем __str__
+            print("Товары:")
+            for product in category:
+                print(f"  - {product}")  # Используем __str__
     else:
         print("Не удалось загрузить данные из JSON файла")
 
 
 if __name__ == "__main__":
-    demonstrate_basic_functionality()
-    demonstrate_new_features()
+    demonstrate_magic_methods()
+    demonstrate_previous_functionality()
     demonstrate_json_loading()
