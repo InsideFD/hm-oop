@@ -1,6 +1,6 @@
 class Product:
     """
-    Класс для представления товара в интернет-магазине.
+    Базовый класс для представления товара в интернет-магазине.
     """
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
@@ -28,9 +28,12 @@ class Product:
 
         Returns:
             Сумма произведений цены на количество для двух продуктов
+
+        Raises:
+            TypeError: если пытаются сложить товары разных классов
         """
-        if not isinstance(other, Product):
-            raise TypeError("Можно складывать только объекты класса Product")
+        if type(self) is not type(other):  # Исправлено: is not вместо !=
+            raise TypeError("Нельзя складывать товары разных классов")
 
         return (self.__price * self.quantity) + (other.__price * other.quantity)
 
@@ -75,11 +78,97 @@ class Product:
         return f"Product('{self.name}', '{self.description}', {self.__price}, {self.quantity})"
 
 
+class Smartphone(Product):
+    """
+    Класс для представления смартфона.
+    Наследуется от класса Product.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ):
+        """
+        Инициализация объекта смартфона.
+
+        Args:
+            name: Название смартфона
+            description: Описание смартфона
+            price: Цена смартфона
+            quantity: Количество в наличии
+            efficiency: Производительность
+            model: Модель
+            memory: Объем встроенной памяти (ГБ)
+            color: Цвет
+        """
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __repr__(self):
+        """Представление объекта для отладки."""
+        return (
+            f"Smartphone('{self.name}', '{self.description}', {self.price}, "
+            f"{self.quantity}, {self.efficiency}, '{self.model}', {self.memory}, '{self.color}')"
+        )
+
+
+class LawnGrass(Product):
+    """
+    Класс для представления газонной травы.
+    Наследуется от класса Product.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: int,
+        color: str,
+    ):
+        """
+        Инициализация объекта газонной травы.
+
+        Args:
+            name: Название травы
+            description: Описание травы
+            price: Цена травы
+            quantity: Количество в наличии
+            country: Страна-производитель
+            germination_period: Срок прорастания (дни)
+            color: Цвет
+        """
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __repr__(self):
+        """Представление объекта для отладки."""
+        return (
+            f"LawnGrass('{self.name}', '{self.description}', {self.price}, "
+            f"{self.quantity}, '{self.country}', {self.germination_period}, '{self.color}')"
+        )
+
+
 class Category:
     """
     Класс для представления категории товаров в интернет-магазине.
     """
 
+    # Атрибуты класса
     category_count = 0
     product_count = 0
 
@@ -110,13 +199,18 @@ class Category:
         Добавляет продукт в категорию.
 
         Args:
-            product: Объект класса Product для добавления
+            product: Объект для добавления (должен быть Product или его наследником)
+
+        Raises:
+            TypeError: если переданный объект не является продуктом
         """
-        if isinstance(product, Product):
-            self._products.append(product)
-            Category.product_count += 1
-        else:
-            raise TypeError("Можно добавлять только объекты класса Product")
+        if not isinstance(product, Product):
+            raise TypeError(
+                "Можно добавлять только объекты класса Product или его наследников"
+            )
+
+        self._products.append(product)
+        Category.product_count += 1
 
     @property
     def products(self):

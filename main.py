@@ -1,95 +1,112 @@
-from src.models import Product, Category
-from src.utils import load_products_from_json
+from src.models import Product, Smartphone, LawnGrass, Category
 
 
-def demonstrate_magic_methods():
-    """Демонстрация магических методов."""
-    print("=== ДЕМОНСТРАЦИЯ МАГИЧЕСКИХ МЕТОДОВ ===")
+def demonstrate_inheritance():
+    """Демонстрация наследования и новых классов."""
+    print("=== ДЕМОНСТРАЦИЯ НАСЛЕДОВАНИЯ ===")
 
-    # Создание товаров
-    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+    # Создание обычного продукта
+    product = Product("Обычный товар", "Просто товар", 500.0, 20)
+    print(f"\n1. Обычный продукт: {product}")
 
-    # Демонстрация __str__ для продуктов
-    print("\n1. Строковое представление продуктов:")
-    print(product1)
-    print(product2)
-    print(product3)
+    # Создание смартфона
+    smartphone = Smartphone(
+        name="Samsung Galaxy S24",
+        description="Флагманский смартфон",
+        price=120000.0,
+        quantity=8,
+        efficiency=4.2,
+        model="S24 Ultra",
+        memory=512,
+        color="Титановый серый"
+    )
+    print(f"\n2. Смартфон: {smartphone}")
+    print(f"   Производительность: {smartphone.efficiency} ГГц")
+    print(f"   Модель: {smartphone.model}")
+    print(f"   Память: {smartphone.memory} ГБ")
+    print(f"   Цвет: {smartphone.color}")
 
-    # Создание категории
-    category = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
-        [product1, product2, product3],
+    # Создание газонной травы
+    lawn_grass = LawnGrass(
+        name="Газонная трава 'Изумруд'",
+        description="Премиальная газонная трава",
+        price=4500.0,
+        quantity=150,
+        country="Германия",
+        germination_period=12,
+        color="Ярко-зеленый"
+    )
+    print(f"\n3. Газонная трава: {lawn_grass}")
+    print(f"   Страна: {lawn_grass.country}")
+    print(f"   Срок прорастания: {lawn_grass.germination_period} дней")
+    print(f"   Цвет: {lawn_grass.color}")
+
+    # Демонстрация сложения одинаковых классов
+    print(f"\n4. Сложение товаров одинаковых классов:")
+
+    smartphone2 = Smartphone(
+        name="iPhone 15 Pro", description="Apple смартфон", price=130000.0, quantity=5,
+        efficiency=3.8, model="15 Pro", memory=256, color="Синий"
     )
 
-    # Демонстрация __str__ для категории
-    print(f"\n2. Строковое представление категории:")
-    print(category)
+    total_smartphones = smartphone + smartphone2
+    print(f"   Общая стоимость смартфонов на складе: {total_smartphones} руб.")
 
-    # Демонстрация сложения продуктов
-    print(f"\n3. Сложение продуктов (общая стоимость товаров на складе):")
-    total_value = product1 + product2
-    print(f"Стоимость {product1.name} и {product2.name} на складе: {total_value} руб.")
+    # Демонстрация ошибки при сложении разных классов
+    print(f"\n5. Попытка сложения разных классов:")
+    try:
+        invalid_sum = smartphone + lawn_grass
+        print(f"   Результат: {invalid_sum}")  # Эта строка не выполнится
+    except TypeError as e:
+        print(f"   Ошибка: {e}")
 
-    total_all = product1 + product2 + product3
-    print(f"Общая стоимость всех трех товаров на складе: {total_all} руб.")
+    # Демонстрация работы с категориями
+    print(f"\n6. Работа с категориями и разными типами продуктов:")
 
-    # Демонстрация итератора категории
-    print(f"\n4. Итерация по товарам категории:")
-    for i, product in enumerate(category, 1):
-        print(f"{i}. {product}")
+    electronics_category = Category("Электроника", "Техника и гаджеты", [])
 
-    # Демонстрация с пустой категорией
-    empty_category = Category("Пустая категория", "Нет товаров", [])
-    print(f"\n5. Пустая категория:")
-    print(empty_category)
-    print("Товары в пустой категории:")
-    for product in empty_category:
-        print(product)  # Этот блок не выполнится
-    print("(товаров нет)")
+    # Добавляем разные типы продуктов
+    electronics_category.add_product(smartphone)
+    electronics_category.add_product(smartphone2)
+
+    garden_category = Category("Сад и огород", "Товары для сада", [])
+    garden_category.add_product(lawn_grass)
+
+    print(f"   Категория '{electronics_category.name}': {electronics_category}")
+    print(f"   Категория '{garden_category.name}': {garden_category}")
+
+    # Демонстрация ошибки при добавлении не-продукта
+    print(f"\n7. Попытка добавления не-продукта в категорию:")
+    try:
+        electronics_category.add_product("Это не продукт")
+        print("   Успешно добавлено")  # Эта строка не выполнится
+    except TypeError as e:
+        print(f"   Ошибка: {e}")
 
 
 def demonstrate_previous_functionality():
-    """Демонстрация предыдущей функциональности."""
-    print("\n=== ДЕМОНСТРАЦИЯ ПРЕДЫДУЩЕЙ ФУНКЦИОНАЛЬНОСТИ ===")
+    """Демонстрация что предыдущая функциональность работает."""
+    print("\n=== ПРОВЕРКА ПРЕДЫДУЩЕЙ ФУНКЦИОНАЛЬНОСТИ ===")
 
-    # Проверка работы геттера products
-    product1 = Product("Тестовый товар 1", "Описание 1", 1000.0, 2)
-    product2 = Product("Тестовый товар 2", "Описание 2", 2000.0, 3)
+    # Проверка работы итератора
+    products = [
+        Product("Товар 1", "Описание 1", 100.0, 10),
+        Product("Товар 2", "Описание 2", 200.0, 5),
+    ]
+    category = Category("Тестовая категория", "Описание", products)
 
-    category = Category("Тестовая категория", "Описание", [product1, product2])
-
-    print("\nГеттер products:")
-    print(category.products)
+    print("\nИтерация по категории:")
+    for i, product in enumerate(category, 1):
+        print(f"  {i}. {product}")
 
     # Проверка работы с ценой
     print(f"\nРабота с ценой:")
-    print(f"Исходная цена: {product1.price}")
-    product1.price = 1500.0
-    print(f"Новая цена: {product1.price}")
-    print("Попытка установить отрицательную цену:")
-    product1.price = -500
-
-
-def demonstrate_json_loading():
-    """Демонстрация загрузки данных из JSON."""
-    print("\n=== ЗАГРУЗКА ИЗ JSON ===")
-    categories_from_json = load_products_from_json("data/products.json")
-
-    if categories_from_json:
-        print(f"Загружено категорий из JSON: {len(categories_from_json)}")
-        for category in categories_from_json:
-            print(f"\n{category}")  # Используем __str__
-            print("Товары:")
-            for product in category:
-                print(f"  - {product}")  # Используем __str__
-    else:
-        print("Не удалось загрузить данные из JSON файла")
+    product = Product("Тестовый товар", "Описание", 1000.0, 2)
+    print(f"  Исходная цена: {product.price}")
+    product.price = 1500.0
+    print(f"  Новая цена: {product.price}")
 
 
 if __name__ == "__main__":
-    demonstrate_magic_methods()
+    demonstrate_inheritance()
     demonstrate_previous_functionality()
-    demonstrate_json_loading()
