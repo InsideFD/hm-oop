@@ -1,13 +1,15 @@
-from src.models import Product, Smartphone, LawnGrass, Category
+from src.models import Product, Smartphone, LawnGrass, Category, Order
 
 
-def demonstrate_inheritance():
-    """Демонстрация наследования и новых классов."""
-    print("=== ДЕМОНСТРАЦИЯ НАСЛЕДОВАНИЯ ===")
+def demonstrate_abstract_classes_and_mixins():
+    """Демонстрация абстрактных классов и миксинов."""
+    print("=== ДЕМОНСТРАЦИЯ АБСТРАКТНЫХ КЛАССОВ И МИКСИНОВ ===")
+
+    print("\n1. Создание продуктов (должны выводиться сообщения о создании):")
 
     # Создание обычного продукта
     product = Product("Обычный товар", "Просто товар", 500.0, 20)
-    print(f"\n1. Обычный продукт: {product}")
+    print(f"   Создан: {product}")
 
     # Создание смартфона
     smartphone = Smartphone(
@@ -20,13 +22,8 @@ def demonstrate_inheritance():
         memory=512,
         color="Титановый серый"
     )
-    print(f"\n2. Смартфон: {smartphone}")
-    print(f"   Производительность: {smartphone.efficiency} ГГц")
-    print(f"   Модель: {smartphone.model}")
-    print(f"   Память: {smartphone.memory} ГБ")
-    print(f"   Цвет: {smartphone.color}")
+    print(f"   Создан: {smartphone}")
 
-    # Создание газонной травы
     lawn_grass = LawnGrass(
         name="Газонная трава 'Изумруд'",
         description="Премиальная газонная трава",
@@ -36,77 +33,51 @@ def demonstrate_inheritance():
         germination_period=12,
         color="Ярко-зеленый"
     )
-    print(f"\n3. Газонная трава: {lawn_grass}")
-    print(f"   Страна: {lawn_grass.country}")
-    print(f"   Срок прорастания: {lawn_grass.germination_period} дней")
-    print(f"   Цвет: {lawn_grass.color}")
+    print(f"   Создан: {lawn_grass}")
 
-    # Демонстрация сложения одинаковых классов
-    print(f"\n4. Сложение товаров одинаковых классов:")
+    print(f"\n2. Проверка наследования:")
+    print(f"   Product является BaseProduct: {isinstance(product, Product)}")
+    print(f"   Smartphone является Product: {isinstance(smartphone, Product)}")
+    print(f"   LawnGrass является Product: {isinstance(lawn_grass, Product)}")
+    print(f"   Все являются BaseProduct: {isinstance(product, type(product))}")
 
-    smartphone2 = Smartphone(
-        name="iPhone 15 Pro", description="Apple смартфон", price=130000.0, quantity=5,
-        efficiency=3.8, model="15 Pro", memory=256, color="Синий"
-    )
+    print(f"\n3. Создание заказов:")
 
-    total_smartphones = smartphone + smartphone2
-    print(f"   Общая стоимость смартфонов на складе: {total_smartphones} руб.")
+    order1 = Order(product, 5)
+    print(f"   Заказ 1: {order1}")
 
-    # Демонстрация ошибки при сложении разных классов
-    print(f"\n5. Попытка сложения разных классов:")
-    try:
-        invalid_sum = smartphone + lawn_grass
-        print(f"   Результат: {invalid_sum}")  # Эта строка не выполнится
-    except TypeError as e:
-        print(f"   Ошибка: {e}")
+    order2 = Order(smartphone, 2)
+    print(f"   Заказ 2: {order2}")
 
-    # Демонстрация работы с категориями
-    print(f"\n6. Работа с категориями и разными типами продуктов:")
+    order3 = Order(lawn_grass, 25)
+    print(f"   Заказ 3: {order3}")
 
-    electronics_category = Category("Электроника", "Техника и гаджеты", [])
-
-    # Добавляем разные типы продуктов
-    electronics_category.add_product(smartphone)
-    electronics_category.add_product(smartphone2)
-
-    garden_category = Category("Сад и огород", "Товары для сада", [])
-    garden_category.add_product(lawn_grass)
-
-    print(f"   Категория '{electronics_category.name}': {electronics_category}")
-    print(f"   Категория '{garden_category.name}': {garden_category}")
-
-    # Демонстрация ошибки при добавлении не-продукта
-    print(f"\n7. Попытка добавления не-продукта в категорию:")
-    try:
-        electronics_category.add_product("Это не продукт")
-        print("   Успешно добавлено")  # Эта строка не выполнится
-    except TypeError as e:
-        print(f"   Ошибка: {e}")
+    total_orders = order1.total_price + order2.total_price + order3.total_price
+    print(f"\n4. Итоговая стоимость всех заказов: {total_orders} руб.")
 
 
 def demonstrate_previous_functionality():
     """Демонстрация что предыдущая функциональность работает."""
     print("\n=== ПРОВЕРКА ПРЕДЫДУЩЕЙ ФУНКЦИОНАЛЬНОСТИ ===")
 
-    # Проверка работы итератора
     products = [
         Product("Товар 1", "Описание 1", 100.0, 10),
         Product("Товар 2", "Описание 2", 200.0, 5),
     ]
     category = Category("Тестовая категория", "Описание", products)
 
-    print("\nИтерация по категории:")
-    for i, product in enumerate(category, 1):
-        print(f"  {i}. {product}")
+    print(f"\nКатегория: {category}")
+    print("Товары в категории:")
+    for product in category:
+        print(f"  - {product}")
 
-    # Проверка работы с ценой
-    print(f"\nРабота с ценой:")
-    product = Product("Тестовый товар", "Описание", 1000.0, 2)
-    print(f"  Исходная цена: {product.price}")
-    product.price = 1500.0
-    print(f"  Новая цена: {product.price}")
+    # Проверка сложения
+    product1 = Product("Товар A", "Описание", 50.0, 4)
+    product2 = Product("Товар B", "Описание", 150.0, 2)
+    total = product1 + product2
+    print(f"\nСумма товаров на складе: {total} руб.")
 
 
 if __name__ == "__main__":
-    demonstrate_inheritance()
+    demonstrate_abstract_classes_and_mixins()
     demonstrate_previous_functionality()

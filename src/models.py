@@ -1,6 +1,58 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class LoggingMixin:
     """
-    Базовый класс для представления товара в интернет-магазине.
+    Миксин для логирования создания объектов.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Инициализация с логированием параметров создания объекта.
+        """
+        super().__init__(*args, **kwargs)
+        print(f"Создан объект {self.__class__.__name__}")
+
+
+class BaseProduct(ABC):
+    """
+    Абстрактный базовый класс для товаров.
+    """
+
+    @abstractmethod
+    def __init__(self):
+        """
+        Абстрактный метод инициализации продукта.
+        """
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        """Абстрактный метод строкового представления."""
+        pass
+
+    @abstractmethod
+    def __add__(self, other):
+        """Абстрактный метод сложения продуктов."""
+        pass
+
+    @property
+    @abstractmethod
+    def price(self):
+        """Абстрактный геттер для цены."""
+        pass
+
+    @price.setter
+    @abstractmethod
+    def price(self, value):
+        """Абстрактный сеттер для цены."""
+        pass
+
+
+class Product(LoggingMixin, BaseProduct):
+    """
+    Класс для представления товара в интернет-магазине.
+    Наследуется миксина LoggingMixin и абстрактного класса BaseProduct.
     """
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
@@ -18,6 +70,8 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
+        super().__init__()
+
     def __str__(self):
         """Строковое представление продукта."""
         return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
@@ -32,7 +86,7 @@ class Product:
         Raises:
             TypeError: если пытаются сложить товары разных классов
         """
-        if type(self) is not type(other):  # Исправлено: is not вместо !=
+        if type(self) is not type(other):
             raise TypeError("Нельзя складывать товары разных классов")
 
         return (self.__price * self.quantity) + (other.__price * other.quantity)
@@ -168,7 +222,6 @@ class Category:
     Класс для представления категории товаров в интернет-магазине.
     """
 
-    # Атрибуты класса
     category_count = 0
     product_count = 0
 
@@ -274,3 +327,33 @@ class CategoryIterator:
             return product
         else:
             raise StopIteration
+
+
+class Order:
+    """
+    Класс для представления заказа.
+    """
+
+    def __init__(self, product: Product, quantity: int):
+        """
+        Инициализация заказа.
+
+        Args:
+            product: Товар в заказе
+            quantity: Количество товара
+        """
+        self.product = product
+        self.quantity = quantity
+        self.total_price = product.price * quantity
+
+    def __str__(self):
+        """Строковое представление заказа."""
+        return (
+            f"Заказ: {self.product.name}, "
+            f"Количество: {self.quantity}, "
+            f"Итого: {self.total_price} руб."
+        )
+
+    def __repr__(self):
+        """Представление объекта для отладки."""
+        return f"Order({repr(self.product)}, {self.quantity})"
