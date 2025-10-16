@@ -1,14 +1,7 @@
 import pytest
 
-from src.models import (
-    BaseProduct,
-    Category,
-    LawnGrass,
-    LoggingMixin,
-    Order,
-    Product,
-    Smartphone,
-)
+from src.models import (BaseProduct, Category, LawnGrass, LoggingMixin, Order,
+                        Product, Smartphone)
 
 
 class TestAbstractClassesAndMixins:
@@ -72,9 +65,7 @@ class TestAbstractClassesAndMixins:
 
     def test_logging_mixin_functionality(self, capsys):
         """Тест функциональности миксина логирования."""
-        _ = Product(
-            "Test Product", "Description", 100.0, 5
-        )
+        _ = Product("Test Product", "Description", 100.0, 5)
 
         captured = capsys.readouterr()
         assert "Создан объект Product" in captured.out
@@ -124,7 +115,6 @@ class TestAbstractClassesAndMixins:
     def test_abstract_methods_implementation(self):
         """Тест все абстрактные методы реализованы."""
         product = Product("Test", "Description", 100.0, 5)
-
 
         assert str(product) == "Test, 100.0 руб. Остаток: 5 шт."
         assert product.price == 100.0

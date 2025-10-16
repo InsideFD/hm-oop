@@ -1,83 +1,45 @@
-from src.models import Product, Smartphone, LawnGrass, Category, Order
-
-
-def demonstrate_abstract_classes_and_mixins():
-    """Демонстрация абстрактных классов и миксинов."""
-    print("=== ДЕМОНСТРАЦИЯ АБСТРАКТНЫХ КЛАССОВ И МИКСИНОВ ===")
-
-    print("\n1. Создание продуктов (должны выводиться сообщения о создании):")
-
-    # Создание обычного продукта
-    product = Product("Обычный товар", "Просто товар", 500.0, 20)
-    print(f"   Создан: {product}")
-
-    # Создание смартфона
-    smartphone = Smartphone(
-        name="Samsung Galaxy S24",
-        description="Флагманский смартфон",
-        price=120000.0,
-        quantity=8,
-        efficiency=4.2,
-        model="S24 Ultra",
-        memory=512,
-        color="Титановый серый"
-    )
-    print(f"   Создан: {smartphone}")
-
-    lawn_grass = LawnGrass(
-        name="Газонная трава 'Изумруд'",
-        description="Премиальная газонная трава",
-        price=4500.0,
-        quantity=150,
-        country="Германия",
-        germination_period=12,
-        color="Ярко-зеленый"
-    )
-    print(f"   Создан: {lawn_grass}")
-
-    print(f"\n2. Проверка наследования:")
-    print(f"   Product является BaseProduct: {isinstance(product, Product)}")
-    print(f"   Smartphone является Product: {isinstance(smartphone, Product)}")
-    print(f"   LawnGrass является Product: {isinstance(lawn_grass, Product)}")
-    print(f"   Все являются BaseProduct: {isinstance(product, type(product))}")
-
-    print(f"\n3. Создание заказов:")
-
-    order1 = Order(product, 5)
-    print(f"   Заказ 1: {order1}")
-
-    order2 = Order(smartphone, 2)
-    print(f"   Заказ 2: {order2}")
-
-    order3 = Order(lawn_grass, 25)
-    print(f"   Заказ 3: {order3}")
-
-    total_orders = order1.total_price + order2.total_price + order3.total_price
-    print(f"\n4. Итоговая стоимость всех заказов: {total_orders} руб.")
-
-
-def demonstrate_previous_functionality():
-    """Демонстрация что предыдущая функциональность работает."""
-    print("\n=== ПРОВЕРКА ПРЕДЫДУЩЕЙ ФУНКЦИОНАЛЬНОСТИ ===")
-
-    products = [
-        Product("Товар 1", "Описание 1", 100.0, 10),
-        Product("Товар 2", "Описание 2", 200.0, 5),
-    ]
-    category = Category("Тестовая категория", "Описание", products)
-
-    print(f"\nКатегория: {category}")
-    print("Товары в категории:")
-    for product in category:
-        print(f"  - {product}")
-
-    # Проверка сложения
-    product1 = Product("Товар A", "Описание", 50.0, 4)
-    product2 = Product("Товар B", "Описание", 150.0, 2)
-    total = product1 + product2
-    print(f"\nСумма товаров на складе: {total} руб.")
+from src.models import Product, Category
 
 
 if __name__ == "__main__":
-    demonstrate_abstract_classes_and_mixins()
-    demonstrate_previous_functionality()
+    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+
+    print(product1.name)
+    print(product1.description)
+    print(product1.price)
+    print(product1.quantity)
+
+    print(product2.name)
+    print(product2.description)
+    print(product2.price)
+    print(product2.quantity)
+
+    print(product3.name)
+    print(product3.description)
+    print(product3.price)
+    print(product3.quantity)
+
+    category1 = Category("Смартфоны",
+                         "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
+                         [product1, product2, product3])
+
+    print(category1.name == "Смартфоны")
+    print(category1.description)
+    print(len(category1.products.split('\n')))
+    print(category1.category_count)
+    print(category1.product_count)
+
+    product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
+    category2 = Category("Телевизоры",
+                         "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником",
+                         [product4])
+
+    print(category2.name)
+    print(category2.description)
+    print(len(category2.products.split('\n')))
+    print(category2.products)
+
+    print(Category.category_count)
+    print(Category.product_count)

@@ -46,3 +46,23 @@ poetry run pytest
 ```bash
 poetry run python main.py
 ```
+
+## Тестирование
+
+### Покрытие тестами
+Проект включает комплексные тесты для всех основных компонентов. Текущее покрытие тестами составляет более 75%.
+
+#### Запуск тестов с отчетом о покрытии:
+```bash
+# Запуск тестов с отчетом о покрытии
+poetry run pytest --cov=src --cov-report=html --cov-report=term-missing
+```
+```bash
+# Запуск только тестов
+poetry run pytest tests/ -v
+```
+```bash
+# Проверка стиля кода
+poetry run flake8 src/ tests/
+poetry run isort src/ tests/
+poetry run black src/ tests/
