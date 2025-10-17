@@ -10,8 +10,8 @@ class LoggingMixin:
         """
         Инициализация с логированием параметров создания объекта.
         """
+        # Сначала вызываем следующий конструктор в цепочке
         super().__init__(*args, **kwargs)
-        print(f"Создан объект {self.__class__.__name__}")
 
 
 class BaseProduct(ABC):
@@ -52,7 +52,7 @@ class BaseProduct(ABC):
 class Product(LoggingMixin, BaseProduct):
     """
     Класс для представления товара в интернет-магазине.
-    Наследуется миксина LoggingMixin и абстрактного класса BaseProduct.
+    Наследуется от миксина LoggingMixin и абстрактного класса BaseProduct.
     """
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
@@ -65,12 +65,19 @@ class Product(LoggingMixin, BaseProduct):
             price: Цена товара
             quantity: Количество товара в наличии
         """
+        # Инициализируем атрибуты
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
 
+        # Вызываем конструкторы родителей через super()
         super().__init__()
+
+        # Логируем создание объекта с параметрами
+        print(
+            f"Создан объект Product с параметрами: Product('{name}', '{description}', {price}, {quantity})"
+        )
 
     def __str__(self):
         """Строковое представление продукта."""
@@ -162,11 +169,17 @@ class Smartphone(Product):
             memory: Объем встроенной памяти (ГБ)
             color: Цвет
         """
+        # Инициализируем родительский класс
         super().__init__(name, description, price, quantity)
+        # Добавляем специфичные атрибуты
         self.efficiency = efficiency
         self.model = model
         self.memory = memory
         self.color = color
+
+        # Логируем создание объекта с параметрами
+        params = f"'{name}', '{description}', {price}, {quantity}, {efficiency}, '{model}', {memory}, '{color}'"
+        print(f"Создан объект Smartphone с параметрами: Smartphone({params})")
 
     def __repr__(self):
         """Представление объекта для отладки."""
@@ -204,10 +217,16 @@ class LawnGrass(Product):
             germination_period: Срок прорастания (дни)
             color: Цвет
         """
+        # Инициализируем родительский класс
         super().__init__(name, description, price, quantity)
+        # Добавляем специфичные атрибуты
         self.country = country
         self.germination_period = germination_period
         self.color = color
+
+        # Логируем создание объекта с параметрами
+        params = f"'{name}', '{description}', {price}, {quantity}, '{country}', {germination_period}, '{color}'"
+        print(f"Создан объект LawnGrass с параметрами: LawnGrass({params})")
 
     def __repr__(self):
         """Представление объекта для отладки."""
@@ -222,6 +241,7 @@ class Category:
     Класс для представления категории товаров в интернет-магазине.
     """
 
+    # Атрибуты класса
     category_count = 0
     product_count = 0
 
