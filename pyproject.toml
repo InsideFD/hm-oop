@@ -14,3 +14,43 @@ dependencies = [
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+pytest-cov = "^7.0.0"
+flake8 = "^7.3.0"
+black = "^25.9.0"
+isort = "^6.0.1"
+mypy = "^1.18.2"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = """
+    --cov=src
+    --cov-report=html
+    --cov-report=term-missing
+    --strict-markers
+    --strict-config
+"""
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/test_*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "raise.*TypeError.*",
+]
