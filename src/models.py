@@ -10,7 +10,6 @@ class LoggingMixin:
         """
         Инициализация с логированием параметров создания объекта.
         """
-        # Сначала вызываем следующий конструктор в цепочке
         super().__init__(*args, **kwargs)
 
 
@@ -52,7 +51,7 @@ class BaseProduct(ABC):
 class Product(LoggingMixin, BaseProduct):
     """
     Класс для представления товара в интернет-магазине.
-    Наследуется от миксина LoggingMixin и абстрактного класса BaseProduct.
+    Наследуется миксина LoggingMixin и абстрактного класса BaseProduct.
     """
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
@@ -64,8 +63,13 @@ class Product(LoggingMixin, BaseProduct):
             description: Описание товара
             price: Цена товара
             quantity: Количество товара в наличии
+
+        Raises:
+            ValueError: если количество товара равно нулю
         """
-        # Инициализируем атрибуты
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         self.name = name
         self.description = description
         self.__price = price
@@ -217,14 +221,11 @@ class LawnGrass(Product):
             germination_period: Срок прорастания (дни)
             color: Цвет
         """
-        # Инициализируем родительский класс
         super().__init__(name, description, price, quantity)
-        # Добавляем специфичные атрибуты
         self.country = country
         self.germination_period = germination_period
         self.color = color
 
-        # Логируем создание объекта с параметрами
         params = f"'{name}', '{description}', {price}, {quantity}, '{country}', {germination_period}, '{color}'"
         print(f"Создан объект LawnGrass с параметрами: LawnGrass({params})")
 
@@ -241,7 +242,6 @@ class Category:
     Класс для представления категории товаров в интернет-магазине.
     """
 
-    # Атрибуты класса
     category_count = 0
     product_count = 0
 
@@ -258,7 +258,6 @@ class Category:
         self.description = description
         self._products = products
 
-        # Обновляем атрибуты класса
         Category.category_count += 1
         Category.product_count += len(products)
 
@@ -300,6 +299,19 @@ class Category:
     def __iter__(self):
         """Возвращает итератор для товаров категории."""
         return CategoryIterator(self._products)
+
+    def average_price(self):
+        """
+        Рассчитывает среднюю цену товаров в категории.
+
+        Returns:
+            Средняя цена товаров или 0, если в категории нет товаров
+        """
+        try:
+            total_price = sum(product.price for product in self._products)
+            return total_price / len(self._products)
+        except ZeroDivisionError:
+            return 0
 
     @classmethod
     def reset_counters(cls):
